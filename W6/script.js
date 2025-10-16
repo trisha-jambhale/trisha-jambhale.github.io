@@ -34,40 +34,60 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hint: Disable the load button while loading
         
         // YOUR CODE HERE:
-       
-        
-        
+      updateStatus('loading', 'Loading restaurant data...');
+        loadButton.disabled = true;
+            
+                
         try {
             // Step 2: Use fetch() to load data
             // Hint: const response = await fetch('restaurants.json');
             // Hint: Check if response.ok before continuing
-            
+
+             const response = await fetch('restaurants.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } 
+
             // Step 3: Convert response to JSON
             // Hint: const data = await response.json();
+            const data = await response.json();
+            
             
             // Step 4: Store data in global variable
             // Hint: restaurants = data;
+            restaurants = data;
             
             // YOUR CODE HERE:
+            
             
             
             // Step 5: Show success state and enable buttons
             // Hint: Update statusDisplay classes and message
             // Hint: Enable all the method buttons
+
+            updateStatus('success', `Loaded ${restaurants.length} restaurants successfully!`);
+            toggleMethodButtons(true);
             
-            // YOUR CODE HERE:
+            // YOUR CODE HERE:const response = await fetch('restaurants.json');
+             
+    
+        
             
             
-        } catch (error) {
+        
             // Step 6: Handle errors gracefully
             // Hint: Show error state with user-friendly message
             // Hint: Log the actual error for debugging
             
             // YOUR CODE HERE:
-            
-            
+             } catch (error) {
+            console.error('Error loading restaurant data:', error);
+            updateStatus('error', 'Failed to load restaurant data. Please try again.');
+        } finally {
+            loadButton.disabled = false;
         }
     });
+    
     
     // ============================================
     // ARRAY METHOD FUNCTIONS - Same as Tutorial 5
@@ -87,9 +107,27 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hint: restaurants.forEach(function(restaurant) { })
         
         // YOUR CODE HERE:
-        
-        
+        restaurantList.innerHTML = '';
+
+
+        restaurants.forEach(function(restaurant) {
+            const item = document.createElement('div');
+            item.classList.add('restaurant-item');
+
+            item.innerHTML = `
+                <h3>${restaurant.name}</h3>
+            <p><strong>Cuisine:</strong> ${restaurant.cuisine}</p>
+            <p><strong>Price:</strong> $${restaurant.price}</p>
+            <p><strong>Rating:</strong> ${restaurant.rating} ★</p>
+            `;
+
+            restaurantList.appendChild(item);
+        });
+
+        updateStatus('success', `Displayed ${restaurants.length} restaurants.`);
     });
+
+
     
     // Filter cheap restaurants (same logic, loaded data)
     filterButton.addEventListener('click', function() {
@@ -104,9 +142,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hint: const cheapRestaurants = restaurants.filter(function(restaurant) { })
         
         // YOUR CODE HERE:
+            const cheapRestaurants = restaurants.filter(function(restaurant) {
+            return restaurant.priceRange === '$' || restaurant.priceRange === '$$';
+});
+
+        filteredList.innerHTML = '';
+
+        if (cheapRestaurants.length === 0) {
+        filteredList.innerHTML = '<p class="placeholder">No cheap restaurants found</p>';
+    } else {
+        cheapRestaurants.forEach(function(restaurant) {
+            const item = document.createElement('div');
+            item.classList.add('restaurant-item');
+            item.innerHTML = `
+                <h4>${restaurant.name}</h4>
+                <p>Cuisine: ${restaurant.cuisine}</p>
+                <p>Price Range: ${restaurant.priceRange}</p>
+            `;
+            filteredList.appendChild(item);
+        });
+    }
+updateStatus('success', `Found ${cheapRestaurants.length} cheap restaurants.`);
+});
         
-        
-    });
     
     // Show restaurant names (same logic, loaded data)
     mapButton.addEventListener('click', function() {
@@ -121,9 +179,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hint: const names = restaurants.map(function(restaurant) { })
         
         // YOUR CODE HERE:
+         const names = restaurants.map(function(restaurant) {
+            return restaurant.name;
+        });
         
-        
+        mappedList.innerHTML = '';
+        names.forEach(function(name) {
+            const p = document.createElement('p');
+            p.textContent = name;
+            mappedList.appendChild(p);
+        });
     });
+
     
     // ============================================
     // ERROR HANDLING DEMO
@@ -151,12 +218,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hint: Create error message div with helpful text
             
             // YOUR CODE HERE:
-            
-            
-            console.error('Demonstrated error:', error);
+               errorDisplay.innerHTML = `
+                <div class="status-display error">
+                    <p class="status-message">Error: Could not load file. Please check the file name or try again.</p>
+                </div>
+            `;
+
+           console.error('Demonstrated error:', error);
         }
     });
-    
 });
 
 // ============================================
@@ -238,6 +308,7 @@ function resetTutorial() {
     console.log('Tutorial reset');
 }
 
+    
 // Call these functions in the browser console:
 // checkDataStatus() - see if data is loaded
 // manualLoadData() - load data without clicking button
