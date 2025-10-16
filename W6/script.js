@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.innerHTML = `
                 <h3>${restaurant.name}</h3>
             <p><strong>Cuisine:</strong> ${restaurant.cuisine}</p>
-            <p><strong>Price:</strong> $${restaurant.price}</p>
+            <p><strong>Price:</strong> $${restaurant.priceRange}</p>
             <p><strong>Rating:</strong> ${restaurant.rating} ★</p>
             `;
 
