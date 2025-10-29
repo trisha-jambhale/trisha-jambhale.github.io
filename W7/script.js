@@ -33,18 +33,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hint: Use the same loading pattern from Tutorial 6
         
         // YOUR CODE HERE:
+
+        updateStatus('loading', 'Loading restaurant data...');
+        loadButton.disabled = true;
         
         
         try {
             // Step 2: Load the GeoJSON data
             // Hint: await fetch('restaurants.geojson') - note the .geojson extension
             // Hint: GeoJSON loads exactly like regular JSON
+              const response = await fetch('restaurants.geojson');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } 
+
             
             // Step 3: Extract restaurant features from GeoJSON
             // Hint: const restaurantData = await response.json();
             // Hint: restaurants = restaurantData.features; (GeoJSON has a 'features' array)
             
             // YOUR CODE HERE:
+            const restaurantData = await response.json();
+            restaurants = restaurantData.features;
             
             
             // Step 4: Show success and enable interface
@@ -52,6 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hint: Call showDataSummary() and showInitialView()
             
             // YOUR CODE HERE:
+
+            updateStatus('success');
+            showDataSummary();
+            showInitialView();
             
             
         } catch (error) {
