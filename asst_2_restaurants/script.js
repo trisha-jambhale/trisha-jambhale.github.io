@@ -71,7 +71,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     document.getElementById("btn-table").onclick = () => {
-      (showTable(data));
+      showTable(data);
+    
       updateButtonStates("table");
     };
 

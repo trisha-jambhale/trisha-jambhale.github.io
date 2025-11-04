@@ -11,27 +11,30 @@ function showTable(data) {
   // - Make it easy to scan and compare
   // - Consider adding sorting functionality
 
+  const extracted = data.slice(0, 24);
+
  const container = document.getElementById("data-display");
   if (!container) {
-    console.error("❌ No element found with class 'data-display'");
+    console.error("No element found with class 'data-display'");
     return;
   }
 
   // Unique cities and categories with reduce
-  const cities = data.reduce((acc, d) => {
+  const cities = extracted.reduce((acc, d) => {
     if (d.city && !acc.includes(d.city)) acc.push(d.city);
     return acc;
   }, []);
 
-  const categories = data.reduce((acc, d) => {
+  const categories = extracted.reduce((acc, d) => {
     if (d.category && !acc.includes(d.category)) acc.push(d.category);
     return acc;
   }, []);
 
   // Build the table inside the container
   container.innerHTML = `
-    <h2>heading insert here</h2>
-    <div style="overflow-x:auto; max-height:500px; border:1px solid #ccc;">
+    <h2 class="view-title">Detailed Compliance Data</h2>
+    <p class="view-description">Compare specific data points across restaurants — sortable and filterable</p>
+    <div class="restaurant-table" style="overflow-x:auto; max-height:500px; border:1px solid #ccc;">
       <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; table-layout:fixed; width:100%;">
         <thead style="background:#f2f2f2; position:sticky; top:0;">
           <tr>
@@ -67,17 +70,17 @@ function showTable(data) {
           </tr>
         </thead>
         <tbody id="tableBody">
-          ${makeRows(data)}
+          ${makeRows(extracted)}
         </tbody>
       </table>
     </div>
   `;
 
-  enableFilters(data);
+  enableFilters(extracted);
 }
 
-function makeRows(data) {
-  return data.map(d => `
+function makeRows(extracted) {
+  return extracted.map(d => `
     <tr>
       <td>${d.establishment_id || ''}</td>
       <td>${d.inspection_date ? new Date(d.inspection_date).toLocaleDateString() : ''}</td>
@@ -90,14 +93,14 @@ function makeRows(data) {
   `).join('');
 }
 
-function enableFilters(data) {
+function enableFilters(extracted) {
   const dateSort = document.getElementById("dateSort");
   const cityFilter = document.getElementById("cityFilter");
   const categoryFilter = document.getElementById("categoryFilter");
   const body = document.getElementById("tableBody");
 
   function updateTable() {
-    let filtered = [...data];
+    let filtered = [...extracted];
 
     // Filter by City
     const cityVal = cityFilter.value;

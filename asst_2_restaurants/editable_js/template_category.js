@@ -9,23 +9,30 @@ function showCategories(data) {
   // - Show items within each group
   // - Make relationships between groups clear
   // - Consider showing group statistics
- 
-const groups = data.reduce((acc, item) => {
-    const key = item.category || "Unknown";
+
+const extracted = data.slice(0, 24);
+
+const groups = extracted.reduce((acc, item) => {
+    const key = item.city || "Unknown";
     if (!acc[key]) acc[key] = [];
     acc[key].push(item);
     return acc;
   }, {});
 
   return `
-    <h2 class="view-title">📂 Category View</h2>
-    ${Object.keys(groups).map(cat => `
-      <div class="category-group" style="margin-bottom:20px; border:1px solid #ccc; padding:10px; border-radius:5px;">
-        <h3>${cat} (${groups[cat].length} restaurants)</h3>
-        <ul>
-          ${groups[cat].slice(0,5).map(r => `<li>${r.name} - ${r.city}</li>`).join('')}
-          ${groups[cat].length > 5 ? `<li>...and ${groups[cat].length - 5} more</li>` : ''}
-        </ul>
+    <h2 class="view-title">Restaurants by City</h2>
+    <p class="view-description">Restaurants grouped by their city for easy comparison.</p>
+    ${Object.keys(groups).map(city => `
+      <div class="category-section">
+        <h3 class="category-header">${city} (${groups[city].length} restaurants)</h3>
+        <div class="category-items">
+          ${groups[city].map(r => `
+            <div class="category-item">
+              <span>${r.name || "Unnamed Restaurant"}</span>
+              <span>${r.inspection_results || "Unknown"}</span>
+            </div>
+          `).join('')}
+        </div>
       </div>
     `).join('')}
   `;
